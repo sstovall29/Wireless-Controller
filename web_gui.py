@@ -29,9 +29,20 @@ def udp_loop():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
+    sock.setblocking(False)
+
+    latest_data = None
 
     while True:
-        data, addr = sock.recvfrom(1024)
+        try:
+          data, addr = sock.recvfrom(1024)
+          latest_data = data
+        except BlockingIOError:
+          break
+
+        if latest_data is None:
+            continue
+    
         line = data.decode(errors="ignore").strip()
 
         parts = line.split(",")
