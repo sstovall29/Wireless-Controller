@@ -14,9 +14,9 @@ latest_prediction = "Waiting..."
 latest_confidence = 0.0
 packet_count = 0
 
-WINDOW = 40
+WINDOW = 30
 buffer = deque(maxlen=WINDOW)
-pred_buffer = deque(maxlen=3)
+pred_buffer = deque(maxlen=1)
 
 model = joblib.load("motion_model.joblib")
 
@@ -108,7 +108,24 @@ def index():
                     "Packets: " + data.packets;
             }
 
-            setInterval(update, 100);
+            async function update() {
+              try {
+                  const res = await fetch('/data');
+                  const data = await res.json();
+
+                  document.getElementById('gesture').innerText = data.prediction;
+                  document.getElementById('confidence').innerText =
+                      "Confidence: " + data.confidence.toFixed(2);
+                  document.getElementById('packets').innerText =
+                      "Packets: " + data.packets;
+              } catch (err) {
+                  console.log(err);
+              }
+
+              setTimeout(update, 50);
+          }
+
+          update();
         </script>
     </body>
     </html>
@@ -128,4 +145,4 @@ if __name__ == "__main__":
     thread = threading.Thread(target=udp_loop, daemon=True)
     thread.start()
 
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, threaded=True)
