@@ -80,58 +80,6 @@ def udp_loop():
 
             latest_prediction = smoothed
             latest_confidence = confidence
-    global latest_prediction, latest_confidence, packet_count
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((UDP_IP, UDP_PORT))
-    sock.setblocking(False)
-
-    latest_data = None
-
-    while True:
-        try:
-          data, addr = sock.recvfrom(1024)
-          latest_data = data
-        except BlockingIOError:
-          break
-
-        if latest_data is None:
-            continue
-    
-        line = data.decode(errors="ignore").strip()
-
-        parts = line.split(",")
-        if len(parts) != 7:
-            continue
-
-        try:
-            values = [float(x) for x in parts]
-        except ValueError:
-            continue
-
-        sample = values[1:7]
-        buffer.append(sample)
-        packet_count += 1
-
-        if len(buffer) == WINDOW:
-            window = np.array(buffer)
-
-            features = extract_features(window)
-            features = np.array(features).reshape(1, -1)
-
-            prediction = model.predict(features)[0]
-
-            if hasattr(model, "predict_proba"):
-                confidence = model.predict_proba(features).max()
-            else:
-                confidence = 0.0
-
-            pred_buffer.append(prediction)
-            smoothed = max(set(pred_buffer), key=pred_buffer.count)
-
-            latest_prediction = smoothed
-            latest_confidence = confidence
-
 
 @app.route("/")
 def index():
