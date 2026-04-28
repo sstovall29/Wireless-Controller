@@ -6,10 +6,11 @@ import numpy as np
 
 model = joblib.load("motion_model.joblib")
 
-WINDOW = 75
+WINDOW = 40
 
 buffer = deque(maxlen=WINDOW)
-pred_buffer = deque(maxlen=5)
+pred_buffer = deque(maxlen=3)
+PREDICT_EVERY = 3
 
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5005
@@ -18,6 +19,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
 print(f"Listening for UDP packets on port {UDP_PORT}...")
+
+count = 0
 
 while True:
     data, addr = sock.recvfrom(1024)
@@ -35,8 +38,9 @@ while True:
 
     sample = values[1:7]  # skip timestamp
     buffer.append(sample)
+    count += 1
 
-    if len(buffer) == WINDOW:
+    if len(buffer) == WINDOW and count % PREDICT_EVERY == 0:
         window = np.array(buffer)
 
         features = extract_features(window)
