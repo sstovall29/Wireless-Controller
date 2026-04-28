@@ -4,6 +4,7 @@ import socket
 from collections import deque
 import numpy as np
 import joblib
+import time
 
 from features import extract_features
 
@@ -25,6 +26,60 @@ UDP_PORT = 5005
 
 
 def udp_loop():
+    global latest_prediction, latest_confidence, packet_count
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((UDP_IP, UDP_PORT))
+    sock.setblocking(False)
+
+    while True:
+        latest_data = None
+
+        # Drain all waiting packets and keep only newest one
+        while True:
+            try:
+                data, addr = sock.recvfrom(1024)
+                latest_data = data
+            except BlockingIOError:
+                break
+
+        if latest_data is None:    
+            time.sleep(0.001)
+            continue
+
+        line = latest_data.decode(errors="ignore").strip()
+
+        parts = line.split(",")
+        if len(parts) != 7:
+            continue
+
+        try:
+            values = [float(x) for x in parts]
+        except ValueError:
+            continue
+
+        sample = values[1:7]
+        buffer.append(sample)
+        packet_count += 1
+
+        if len(buffer) == WINDOW:
+            window = np.array(buffer)
+
+            features = extract_features(window)
+            features = np.array(features).reshape(1, -1)
+
+            prediction = model.predict(features)[0]
+
+            if hasattr(model, "predict_proba"):
+                confidence = model.predict_proba(features).max()
+            else:
+                confidence = 0.0
+
+            pred_buffer.append(prediction)
+            smoothed = max(set(pred_buffer), key=pred_buffer.count)
+
+            latest_prediction = smoothed
+            latest_confidence = confidence
     global latest_prediction, latest_confidence, packet_count
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -108,17 +163,6 @@ def index():
         <div class="info" id="packets"></div>
 
         <script>
-            async function update() {
-                const res = await fetch('/data');
-                const data = await res.json();
-
-                document.getElementById('gesture').innerText = data.prediction;
-                document.getElementById('confidence').innerText =
-                    "Confidence: " + data.confidence.toFixed(2);
-                document.getElementById('packets').innerText =
-                    "Packets: " + data.packets;
-            }
-
             async function update() {
               try {
                   const res = await fetch('/data');
