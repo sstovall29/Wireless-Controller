@@ -2,10 +2,12 @@ import socket
 from collections import deque
 import joblib
 from features import extract_features
+import numpy as np
 
 model = joblib.load("motion_model.joblib")
 
 WINDOW = 75
+
 buffer = deque(maxlen=WINDOW)
 pred_buffer = deque(maxlen=5)
 
@@ -32,19 +34,17 @@ while True:
         continue
 
     sample = values[1:7]  # skip timestamp
+    buffer.append(sample)
 
     if len(buffer) == WINDOW:
-      window = np.array(buffer)
+        window = np.array(buffer)
 
-      features = extract_features(window)
-      features = np.array(features).reshape(1, -1)
+        features = extract_features(window)
+        features = np.array(features).reshape(1, -1)
 
-      prediction = model.predict(features)[0]
+        prediction = model.predict(features)[0]
+        pred_buffer.append(prediction)
 
-      print("Prediction:", prediction)
+        final = max(set(pred_buffer), key=pred_buffer.count)
 
-      pred_buffer.append(prediction)
-
-      if len(pred_buffer) == 5:
-          final = max(set(pred_buffer), key=pred_buffer.count)
-          print("Smoothed:", final)
+        print(f"Prediction: {prediction} | Smoothed: {final}")
