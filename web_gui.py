@@ -129,7 +129,7 @@ def index():
                       "Confidence: " + data.confidence.toFixed(2);
                   document.getElementById('packets').innerText =
                       "Packets: " + data.packets;
-                    document.getElementById('packemotion_levelts').innerText =
+                    document.getElementById('motion_level').innerText =
                         "Motion Level: " + data.motion_level;
               } catch (err) {
                   console.log(err);
