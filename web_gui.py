@@ -15,6 +15,7 @@ latest_prediction = "Waiting..."
 latest_confidence = 0.0
 packet_count = 0
 motion_level = 0
+MOTION_THRESHOLD = 0.1
 
 WINDOW = 30
 buffer = deque(maxlen=WINDOW)
@@ -72,15 +73,16 @@ def udp_loop():
             accel_mag = np.linalg.norm(window[:, 0:3], axis=1)
             motion_level = accel_mag.std()
 
-            if motion_level < 0.1:   # tune this
+            if motion_level < MOTION_THRESHOLD:   # tune this
                 prediction = "idle"
+                confidence = 0.9
             else:
                 prediction = model.predict(features)[0]
 
-            if hasattr(model, "predict_proba"):
-                confidence = model.predict_proba(features).max()
-            else:
-                confidence = 0.0
+                if hasattr(model, "predict_proba"):
+                    confidence = model.predict_proba(features).max()
+                else:
+                    confidence = 0.0
 
             pred_buffer.append(prediction)
             smoothed = max(set(pred_buffer), key=pred_buffer.count)
@@ -109,6 +111,11 @@ def index():
                 font-size: 24px;
                 margin-top: 20px;
             }
+            .motion_level {
+                font-size: 24px;
+                margin-top: 20px;
+                color: #444;
+            }
         </style>
     </head>
     <body>
@@ -133,7 +140,8 @@ def index():
                       "Packets: " + data.packets;
                                   
                     document.getElementById('motion_level').innerText =
-                        "Motion Level: " + data.motion_level;
+                        "Motion Level: " + data.motion_level.toFixed(4) +
+                         " | Threshold: " + data.motion_threshold.toFixed(4);
                                   
               } catch (err) {
                   console.log(err);
@@ -155,7 +163,8 @@ def data():
         "prediction": latest_prediction,
         "confidence": latest_confidence,
         "packets": packet_count,
-        "motion_level": motion_level
+        "motion_level": motion_level,
+        "motion_threshold": MOTION_THRESHOLD
     })
 
 
