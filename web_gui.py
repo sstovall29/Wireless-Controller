@@ -14,6 +14,7 @@ app = Flask(__name__)
 latest_prediction = "Waiting..."
 latest_confidence = 0.0
 packet_count = 0
+motion_level = 0
 
 WINDOW = 30
 buffer = deque(maxlen=WINDOW)
@@ -115,6 +116,7 @@ def index():
         <div class="gesture" id="gesture">Waiting...</div>
         <div class="info" id="confidence"></div>
         <div class="info" id="packets"></div>
+        <div class="motion_level" id="motion_level"></div>
 
         <script>
             async function update() {
@@ -127,6 +129,8 @@ def index():
                       "Confidence: " + data.confidence.toFixed(2);
                   document.getElementById('packets').innerText =
                       "Packets: " + data.packets;
+                    document.getElementById('packemotion_levelts').innerText =
+                        "Motion Level: " + data.motion_level;
               } catch (err) {
                   console.log(err);
               }
@@ -146,7 +150,8 @@ def data():
     return jsonify({
         "prediction": latest_prediction,
         "confidence": latest_confidence,
-        "packets": packet_count
+        "packets": packet_count,
+        "motion_level": motion_level
     })
 
 
