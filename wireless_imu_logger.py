@@ -19,7 +19,10 @@ duration = 3 # duration of each trial
 try:
     while True:
         input("Press ENTER to start a new trial...")
-        duration = input("How long do you want this trial (sec)? ")
+        try:
+          duration = float(input("How long do you want this trial (sec)? "))
+        except ValueError:
+          duration = 3.0        
         trial_num += 1
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         label = input("Enter label (shake, idle, etc): ")
