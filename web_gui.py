@@ -68,7 +68,13 @@ def udp_loop():
             features = extract_features(window)
             features = np.array(features).reshape(1, -1)
 
-            prediction = model.predict(features)[0]
+            accel_mag = np.linalg.norm(window[:, 0:3], axis=1)
+            motion_level = accel_mag.std()
+
+            if motion_level < 0.1:   # tune this
+                prediction = "idle"
+            else:
+                prediction = model.predict(features)[0]
 
             if hasattr(model, "predict_proba"):
                 confidence = model.predict_proba(features).max()
