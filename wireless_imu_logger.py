@@ -13,6 +13,7 @@ print(f"Listening for UDP packets on port {UDP_PORT}...")
 OUTPUT_DIR = "imu_logs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+trial_num = 0
 duration = 3 # duration of each trial
 
 try:
