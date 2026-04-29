@@ -27,7 +27,7 @@ UDP_PORT = 5005
 
 
 def udp_loop():
-    global latest_prediction, latest_confidence, packet_count
+    global latest_prediction, latest_confidence, packet_count, motion_level
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
@@ -125,12 +125,16 @@ def index():
                   const data = await res.json();
 
                   document.getElementById('gesture').innerText = data.prediction;
+                                  
                   document.getElementById('confidence').innerText =
                       "Confidence: " + data.confidence.toFixed(2);
+                                  
                   document.getElementById('packets').innerText =
                       "Packets: " + data.packets;
+                                  
                     document.getElementById('motion_level').innerText =
                         "Motion Level: " + data.motion_level;
+                                  
               } catch (err) {
                   console.log(err);
               }
