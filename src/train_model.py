@@ -7,7 +7,7 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-
+from features import extract_features
 
 DATA_DIR = "../Data/v3_imu_logs"
 CLASSES = ["idle", "shake", "jab", "uppercut", "hook"]
@@ -48,41 +48,6 @@ def make_windows(trials):
 
     return np.array(windows), np.array(labels)
 
-
-def extract_features(window):
-    features = []
-
-    for channel in range(window.shape[1]):
-        axis = window[:, channel]
-
-        # basic features
-        features.append(axis.mean())
-        features.append(axis.std())
-        features.append(axis.min())
-        features.append(axis.max())
-
-        # NEW features (important)
-        diff = np.diff(axis)
-
-        features.append(diff.mean())
-        features.append(diff.std())
-
-        # energy
-        features.append(np.sum(axis**2))
-
-    # magnitude features (unchanged)
-    accel_mag = np.linalg.norm(window[:, 0:3], axis=1)
-    gyro_mag = np.linalg.norm(window[:, 3:6], axis=1)
-
-    features.append(accel_mag.mean())
-    features.append(accel_mag.std())
-    features.append(accel_mag.max())
-
-    features.append(gyro_mag.mean())
-    features.append(gyro_mag.std())
-    features.append(gyro_mag.max())
-
-    return features
 
 def main():
     trials = load_trials()
