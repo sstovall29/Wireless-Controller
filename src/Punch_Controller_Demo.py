@@ -159,6 +159,7 @@ def index():
     </head>
     <body>
         <h1>Wireless IMU Gesture</h1>
+        <h2>Test Header</h2>
         <div class="gesture" id="gesture">Waiting...</div>
         <div class="info" id="confidence"></div>
         <div class="info" id="raw_prediction"></div>
