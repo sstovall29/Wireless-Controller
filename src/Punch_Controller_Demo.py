@@ -23,8 +23,8 @@ WINDOW = 40
 buffer = deque(maxlen=WINDOW)
 pred_buffer = deque(maxlen=3)
 
-CONFIDENCE_THRESHOLD = 0.5
-CONFIRM_COUNT = 3
+CONFIDENCE_THRESHOLD = 0.4
+CONFIRM_COUNT = 2
 COOLDOWN_SECONDS = 0.5
 
 confirm_buffer = deque(maxlen=CONFIRM_COUNT)
