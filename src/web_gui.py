@@ -15,11 +15,11 @@ latest_prediction = "Waiting..."
 latest_confidence = 0.0
 packet_count = 0
 motion_level = 0
-MOTION_THRESHOLD = 0.8
+MOTION_THRESHOLD = 1
 
 WINDOW = 40
 buffer = deque(maxlen=WINDOW)
-pred_buffer = deque(maxlen=1)
+pred_buffer = deque(maxlen=3)
 
 model = joblib.load("motion_model.joblib")
 
