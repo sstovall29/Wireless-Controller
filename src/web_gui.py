@@ -17,7 +17,7 @@ packet_count = 0
 motion_level = 0
 MOTION_THRESHOLD = 0.4
 
-WINDOW = 20
+WINDOW = 50
 buffer = deque(maxlen=WINDOW)
 pred_buffer = deque(maxlen=1)
 
