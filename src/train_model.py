@@ -14,26 +14,6 @@ CLASSES = ["idle", "shake", "jab", "uppercut", "hook"]
 WINDOW_SIZE = 50
 STEP_SIZE = 10
 
-# train_files = []
-# test_files = []
-
-for label in CLASSES:
-    pattern = os.path.join(DATA_DIR, label, "*.csv")
-    files = sorted(glob.glob(pattern))  # important: sorted
-
-    if len(files) < 4:
-        print(f"Not enough files in {label} to split properly")
-        continue
-
-    # test = files[-3:]      # last 3 → test
-    # train = files[:-3]     # rest → train
-
-    # train_files.extend([(f, label) for f in train])
-    # test_files.extend([(f, label) for f in test])
-
-# print(f"Train files: {len(train_files)}")
-# print(f"Test files: {len(test_files)}")
-
 def load_trials():
     all_trials = []
 
@@ -49,17 +29,6 @@ def load_trials():
 
     return all_trials
 
-
-def load_from_file_list(file_list):
-    trials = []
-
-    for file_path, label in file_list:
-        df = pd.read_csv(file_path)
-        df["label"] = label
-        df["trial"] = file_path
-        trials.append(df)
-
-    return trials
 
 def make_windows(trials):
     windows = []
