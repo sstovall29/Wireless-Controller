@@ -19,12 +19,13 @@ packet_count = 0
 motion_level = 0
 MOTION_THRESHOLD = 1
 
+
 WINDOW = 40
 buffer = deque(maxlen=WINDOW)
 pred_buffer = deque(maxlen=3)
 
 CONFIDENCE_THRESHOLD = 0.4
-CONFIRM_COUNT = 2
+CONFIRM_COUNT = 3
 COOLDOWN_SECONDS = 0.5
 
 confirm_buffer = deque(maxlen=CONFIRM_COUNT)
@@ -33,6 +34,11 @@ raw_prediction = "idle"
 confirmed_action = "idle"
 last_fired_action = "idle"
 last_fire_time = 0
+
+DISPLAY_HOLD_TIME = 1.0  # seconds
+
+display_prediction = "idle"
+display_until_time = 0
 
 model = joblib.load("motion_model.joblib")
 
@@ -43,6 +49,7 @@ UDP_PORT = 5005
 def udp_loop():
     global latest_prediction, latest_confidence, packet_count, motion_level
     global raw_prediction, confirmed_action, last_fired_action, last_fire_time
+    global display_prediction, display_until_time
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
@@ -114,20 +121,32 @@ def udp_loop():
 
             # Fire only once when a gesture is confirmed
             if stable_prediction != "idle":
+                if "hook" in confirm_buffer:
+                    stable_prediction = "hook"
+                elif "uppercut" in confirm_buffer:
+                    stable_prediction = "uppercut"
+                elif len(confirm_buffer) == CONFIRM_COUNT and len(set(confirm_buffer)) == 1:
+                    stable_prediction = confirm_buffer[0]
+                else:
+                    stable_prediction = "idle"
                 if now - last_fire_time > COOLDOWN_SECONDS:
                     confirmed_action = stable_prediction
                     last_fired_action = stable_prediction
                     last_fire_time = now
             else:
                 confirmed_action = "idle"
+            
+            if confirmed_action != "idle":
+                display_prediction = confirmed_action
+                display_until_time = now + DISPLAY_HOLD_TIME
 
-            latest_prediction = prediction
+            # If we're still within hold time, keep showing it
+            elif now < display_until_time:
+                pass  # keep current display_prediction
 
-            pred_buffer.append(prediction)
-            smoothed = max(set(pred_buffer), key=pred_buffer.count)
+            else:
+                display_prediction = "idle"
 
-            latest_prediction = smoothed
-            latest_confidence = confidence
 
 @app.route("/")
 def index():
@@ -159,7 +178,6 @@ def index():
     </head>
     <body>
         <h1>Wireless IMU Gesture</h1>
-        <h2>Test Header</h2>
         <div class="gesture" id="gesture">Waiting...</div>
         <div class="info" id="confidence"></div>
         <div class="info" id="raw_prediction"></div>
@@ -174,7 +192,7 @@ def index():
                   const res = await fetch('/data');
                   const data = await res.json();
 
-                  document.getElementById('gesture').innerText = data.prediction;
+                  document.getElementById('gesture').innerText = data.display_prediction;
                                   
                   document.getElementById('confidence').innerText =
                       "Confidence: " + data.confidence.toFixed(2);
@@ -219,7 +237,8 @@ def data():
             "confidence": latest_confidence,
             "packets": packet_count,
             "motion_level": motion_level,
-            "motion_threshold": MOTION_THRESHOLD
+            "motion_threshold": MOTION_THRESHOLD,
+            "display_prediction": display_prediction
     })
 
 
