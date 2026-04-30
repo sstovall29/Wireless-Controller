@@ -3,7 +3,13 @@ __pycache__/
 *.pyc
 .DS_Store
 
-Data/
+
+!data/.gitkeep
+!data/v1_imu_logs/.gitkeep
+!data/v2_imu_logs/.gitkeep
+data/v1_imu_logs/**
+
+
 *.joblib
 *.pkl
 
