@@ -20,6 +20,7 @@ def load_trials():
     for label in CLASSES:
         pattern = os.path.join(DATA_DIR, label, "*.csv")
         files = glob.glob(pattern)
+        print(label, len(files), files[:3])
 
         for file_path in files:
             df = pd.read_csv(file_path)
