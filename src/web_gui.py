@@ -52,7 +52,7 @@ def udp_loop():
         line = latest_data.decode(errors="ignore").strip()
 
         parts = line.split(",")
-        if len(parts) != 7:
+        if len(parts) != 8:
             continue
 
         try:
