@@ -7,7 +7,9 @@ __pycache__/
 !data/.gitkeep
 !data/v1_imu_logs/.gitkeep
 !data/v2_imu_logs/.gitkeep
-data/v1_imu_logs/**
+data/v1_imu_logs/*/**
+data/v2_imu_logs/*/**
+
 
 
 *.joblib
