@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 DATA_DIR = "../Data/v2_imu_logs"
 CLASSES = ["idle", "shake", "jab", "uppercut", "hook"]
-WINDOW_SIZE = 25
+WINDOW_SIZE = 20
 STEP_SIZE = 5
 
 def load_trials():
