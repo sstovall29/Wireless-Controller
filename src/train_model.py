@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 
 
-DATA_DIR = "../Data/v2_imu_logs"
+DATA_DIR = "../Data/v3_imu_logs"
 CLASSES = ["idle", "shake", "jab", "uppercut", "hook"]
 WINDOW_SIZE = 50
 STEP_SIZE = 5

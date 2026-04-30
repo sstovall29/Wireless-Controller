@@ -15,9 +15,9 @@ latest_prediction = "Waiting..."
 latest_confidence = 0.0
 packet_count = 0
 motion_level = 0
-MOTION_THRESHOLD = 0.4
+MOTION_THRESHOLD = 0.8
 
-WINDOW = 50
+WINDOW = 40
 buffer = deque(maxlen=WINDOW)
 pred_buffer = deque(maxlen=1)
 

@@ -14,7 +14,7 @@ print("Press Ctrl+C to stop recording.\n")
 # Hardcoded label
 label = input("What gesture would you like to log (idle, jab, etc): ")   # change this manually between sessions
 
-OUTPUT_DIR = os.path.join("../Data/v2_imu_logs", label)
+OUTPUT_DIR = os.path.join("../Data/v3_imu_logs", label)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 trial_num = 0
