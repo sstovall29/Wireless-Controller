@@ -11,8 +11,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 DATA_DIR = "../Data/v2_imu_logs"
 CLASSES = ["idle", "shake", "jab", "uppercut", "hook"]
-WINDOW_SIZE = 50
-STEP_SIZE = 10
+WINDOW_SIZE = 25
+STEP_SIZE = 5
 
 def load_trials():
     all_trials = []
@@ -20,7 +20,7 @@ def load_trials():
     for label in CLASSES:
         pattern = os.path.join(DATA_DIR, label, "*.csv")
         files = glob.glob(pattern)
-        print(label, len(files), files[:3])
+        #print(label, len(files), files[:3])
 
         for file_path in files:
             df = pd.read_csv(file_path)
