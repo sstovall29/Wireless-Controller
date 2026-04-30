@@ -17,19 +17,19 @@ STEP_SIZE = 10
 # train_files = []
 # test_files = []
 
-# for label in CLASSES:
-#     pattern = os.path.join(DATA_DIR, label, "*.csv")
-#     files = sorted(glob.glob(pattern))  # important: sorted
+for label in CLASSES:
+    pattern = os.path.join(DATA_DIR, label, "*.csv")
+    files = sorted(glob.glob(pattern))  # important: sorted
 
-#     if len(files) < 4:
-#         print(f"Not enough files in {label} to split properly")
-#         continue
+    if len(files) < 4:
+        print(f"Not enough files in {label} to split properly")
+        continue
 
-#     test = files[-3:]      # last 3 → test
-#     train = files[:-3]     # rest → train
+    # test = files[-3:]      # last 3 → test
+    # train = files[:-3]     # rest → train
 
-#     train_files.extend([(f, label) for f in train])
-#     test_files.extend([(f, label) for f in test])
+    # train_files.extend([(f, label) for f in train])
+    # test_files.extend([(f, label) for f in test])
 
 # print(f"Train files: {len(train_files)}")
 # print(f"Test files: {len(test_files)}")
