@@ -218,7 +218,8 @@ def data():
             "last_fired_action": last_fired_action,
             "confidence": latest_confidence,
             "packets": packet_count,
-            "motion_level": motion_level
+            "motion_level": motion_level,
+            "motion_threshold": MOTION_THRESHOLD
     })
 
 
